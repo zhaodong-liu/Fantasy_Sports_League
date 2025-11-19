@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}
+Leagues
+{% endblock %}
+
+{% block content %}
+<div class="leagues-container">
+    <h1>Select League Type</h1>
+
+    <div class="buttons-container">
+        <a href="{{ url_for('get_user_public_leagues') }}" class="league-button">Public</a>
+        <a href="{{ url_for('get_user_private_leagues') }}" class="league-button">Private</a>
+    </div>
+</div>
+
+<!-- Custom CSS Styles -->
+<style>
+    .leagues-container {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .leagues-container h1 {
+        font-size: 32px;
+        color: #333;
+        margin-bottom: 50px;
+    }
+
+    .buttons-container {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+    }
+
+    .league-button {
+        display: inline-block;
+        background-color: #007bff;
+        color: white;
+        padding: 20px 40px;
+        border-radius: 8px;
+        font-size: 24px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .league-button:hover {
+        background-color: #0056b3;
+        transform: translateY(-5px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .buttons-container {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .league-button {
+            width: 80%;
+            margin: 0 auto;
+        }
+    }
+</style>
+{% endblock %}

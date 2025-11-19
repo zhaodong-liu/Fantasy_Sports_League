@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+
+{% block title %}
+Your Teams
+{% endblock %}
+
+{% block content %}
+<div class="teams-container">
+    <!-- Welcome Message -->
+    <div class="welcome-message">
+        <h2>Your Teams</h2>
+    </div>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    {% if teams %}
+        <table class="teams-table">
+            <thead>
+                <tr>
+                    <th>Team ID</th>
+                    <th>Team Name</th>
+                    <th>League ID</th>
+                    <th>League Name</th>
+                    <th>Total Points</th>
+                    <th>League Ranking</th>
+                    <th>Team Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in teams %}
+                    <tr>
+                        <td>{{ team.TeamID }}</td>
+                        <td>{{ team.TeamName }}</td>
+                        <td>{{ team.LeagueID }}</td>
+                        <td>{{ team.LeagueName }}</td>
+                        <td>{{ team.TotalPoints }}</td>
+                        <td>{{ team.LeagueRanking }}</td>
+                        <td>{{ team.TeamStatus }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-teams">You do not have any teams yet.</p>
+    {% endif %}
+
+    <!-- Back to Team Actions Button -->
+    <div class="back-teams">
+        <a href="{{ url_for('teams') }}">Back to Team Actions</a>
+    </div>
+</div>
+
+<!-- Custom CSS Styles -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .teams-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .welcome-message {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .welcome-message h2 {
+        font-size: 32px;
+        color: #333;
+    }
+
+    .welcome-message p {
+        font-size: 20px;
+        color: #555;
+    }
+
+    /* Flash Messages Styling */
+    .flash-messages {
+        max-width: 800px;
+        margin: 0 auto 30px auto;
+        text-align: center;
+    }
+
+    .flash-messages .alert {
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    .flash-messages .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .flash-messages .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    /* Teams Table Styling */
+    .teams-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 40px;
+    }
+
+    .teams-table th, .teams-table td {
+        padding: 12px 15px;
+        text-align: left;
+    }
+
+    .teams-table thead {
+        background-color: #0056b3;
+        color: white;
+    }
+
+    .teams-table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .teams-table tbody tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    .teams-table th {
+        font-size: 16px;
+    }
+
+    .teams-table td {
+        font-size: 14px;
+    }
+
+    .no-teams {
+        text-align: center;
+        font-size: 18px;
+        color: #555;
+        margin-top: 30px;
+    }
+
+    /* Back to Team Actions Button Styling */
+    .back-teams {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .back-teams a {
+        text-decoration: none;
+        color: white;
+        background-color: #007bff;
+        padding: 12px 25px;
+        border-radius: 6px;
+        font-size: 18px;
+        transition: background-color 0.2s;
+    }
+
+    .back-teams a:hover {
+        background-color: #0056b3;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .teams-table th, .teams-table td {
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .welcome-message h2 {
+            font-size: 28px;
+        }
+
+        .welcome-message p {
+            font-size: 18px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .teams-table th, .teams-table td {
+            padding: 8px;
+            font-size: 12px;
+        }
+
+        .welcome-message h2 {
+            font-size: 24px;
+        }
+
+        .welcome-message p {
+            font-size: 16px;
+        }
+    }
+</style>
+{% endblock %}

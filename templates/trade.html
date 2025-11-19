@@ -1,0 +1,278 @@
+{% extends "base.html" %}
+
+{% block title %}
+Trade Stats
+{% endblock %}
+
+{% block content %}
+    <style>
+        /* Keep the text color of the main header white */
+        header h1 {
+            color: white !important; /* Ensure it is not overridden */
+        }
+
+        /* Remove the unnecessary space at the top */
+        body {
+            margin: 0; /* Reset body margin */
+            padding: 0; /* Reset body padding */
+            background-color: #f8f9fa; /* Ensure consistent background */
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px; /* Add space between the header and the title */
+            margin-bottom: 30px; /* Keep the bottom spacing consistent */
+            color: #343a40;
+        }
+
+        .flash-messages {
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+        }
+
+        .flash-messages .danger {
+            color: #a94442;
+            background-color: #f2dede;
+            border: 1px solid #ebccd1;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .flash-messages .success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border: 1px solid #d6e9c6;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .filters-form {
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 20px;
+        }
+
+        .filters-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #495057;
+        }
+
+        .filters-form select, .filters-form button {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .filters-form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .filters-form button:hover {
+            background-color: #0056b3;
+        }
+
+        .start-trade-button {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .start-trade-button a {
+            display: inline-block;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 18px;
+            transition: background-color 0.3s;
+        }
+
+        .start-trade-button a:hover {
+            background-color: #218838;
+        }
+
+        .trades-list {
+            max-width: 1000px;
+            margin: 0 auto 30px auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+
+        .trade-card {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .trade-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .trade-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 3px solid #007bff;
+            object-fit: cover;
+            margin-bottom: 10px;
+        }
+
+        .player-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #343a40;
+            margin-bottom: 5px;
+        }
+
+        .team-name {
+            font-size: 16px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .trade-direction {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .trade-direction .traded-out {
+            color: #007bff;
+        }
+
+        .trade-direction .traded-in {
+            color: #007bff;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .pagination a, .pagination span {
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #007bff;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .pagination a:hover {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .pagination .active {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            pointer-events: none;
+        }
+
+        .pagination .disabled {
+            color: #6c757d;
+            border-color: #ced4da;
+            pointer-events: none;
+            background-color: #e9ecef;
+        }
+    </style>
+
+    <h1>Trade Stats</h1>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Filters -->
+    <form method="get" action="{{ url_for('trade') }}" class="filters-form">
+        <div>
+            <label for="order_by">Sort By:</label>
+            <select name="order_by" id="order_by">
+                <option value="Name" {% if order_by == 'Name' %}selected{% endif %}>Name</option>
+                <option value="Sport" {% if order_by == 'Sport' %}selected{% endif %}>Sport</option>
+                <option value="Fantasy Points" {% if order_by == 'Fantasy Points' %}selected{% endif %}>Fantasy Points</option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Sort</button>
+        </div>
+    </form>
+
+    <!-- Start Trade Button -->
+    <div class="start-trade-button">
+        <a href="{{ url_for('start_trade') }}">Start Trade</a>
+    </div>
+
+<!-- Trade Cards -->
+<div class="trades-list">
+    {% for trade in trades %}
+        <a href="{{ url_for('player_details', player_id=trade.PlayerID) }}" class="trade-card-link">
+            <div class="trade-card">
+                <div class="player-name">{{ trade.FullName }}</div>
+                <div class="trade-direction">
+                    {% if trade.FromOrTo == 'From' %}
+                        <span class="traded-out">Traded Out from</span>
+                    {% elif trade.FromOrTo == 'To' %}
+                        <span class="traded-in">Traded Into</span>
+                    {% endif %}
+                </div>
+                <div class="team-name">{{ trade.RealTeam }}</div>
+            </div>
+        </a>
+    {% endfor %}
+</div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {% if pagination.has_prev %}
+            <a href="{{ url_for('trade', order_by=order_by, page=pagination.prev_page) }}">Previous</a>
+        {% else %}
+            <span class="disabled">Previous</span>
+        {% endif %}
+        {% for p in range(1, pagination.total_pages + 1) %}
+            {% if p == pagination.current_page %}
+                <span class="active">{{ p }}</span>
+            {% else %}
+                <a href="{{ url_for('trade', order_by=order_by, page=p) }}">{{ p }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if pagination.has_next %}
+            <a href="{{ url_for('trade', order_by=order_by, page=pagination.next_page) }}">Next</a>
+        {% else %}
+            <span class="disabled">Next</span>
+        {% endif %}
+    </div>
+{% endblock %}

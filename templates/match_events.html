@@ -1,0 +1,216 @@
+<!-- templates/match_events.html -->
+{% extends "base.html" %}
+
+{% block title %}
+Match Events
+{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Match Events</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 32px;
+            color: #333;
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .flash-messages .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .flash-messages .alert-danger,
+        .flash-messages .danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .flash-messages .alert-success,
+        .flash-messages .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        /* Form Styles */
+        .sorting-form {
+            max-width: 800px;
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sorting-form label {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .sorting-form select {
+            padding: 8px 12px;
+            margin-right: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        /* Events Table */
+        .events-table {
+            max-width: 1000px;
+            margin: 30px auto;
+            border-collapse: collapse;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .events-table th, .events-table td {
+            padding: 12px 15px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .events-table th {
+            background-color: #007bff;
+            color: white;
+            font-size: 18px;
+        }
+
+        .events-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* No Events Found */
+        .no-events {
+            text-align: center;
+            font-size: 18px;
+            color: #555;
+            margin-top: 40px;
+        }
+
+        /* Back to Matches Link */
+        .back-matches {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .back-matches a {
+            text-decoration: none;
+            color: white;
+            background-color: #6c757d;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.2s;
+        }
+
+        .back-matches a:hover {
+            background-color: #5a6268;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sorting-form {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .sorting-form label, .sorting-form select {
+                margin: 10px 0;
+            }
+
+            .events-table th, .events-table td {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .events-table th {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Match Events - Match ID: {{ match_id }}</h2>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Sorting Options -->
+    <form method="get" action="{{ url_for('match_events', match_id=match_id) }}" class="sorting-form">
+        <label for="order_by">Sort By:</label>
+        <select name="order_by" id="order_by" onchange="this.form.submit()">
+            <option value="Player" {% if order_by == 'Player' %}selected{% endif %}>Player ID</option>
+            <option value="Time" {% if order_by == 'Time' %}selected{% endif %}>Event Time</option>
+        </select>
+    </form>
+
+    <!-- Events Table -->
+    {% if events %}
+        <table class="events-table">
+            <thead>
+                <tr>
+                    <th>Player ID</th>
+                    <th>Event Type</th>
+                    <th>Event Time</th>
+                    <th>Fantasy Points Impact</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in events %}
+                    <tr>
+                        <td>{{ event.PlayerID }}</td>
+                        <td>{{ event.EventType }}</td>
+                        <td>{{ event.EventTime }}</td>
+                        <td>{{ event.ImpactFantasyPoint }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="no-events">No match events found.</p>
+    {% endif %}
+
+    <!-- Back to Matches Button -->
+    <div class="back-matches">
+        <a href="{{ url_for('matches') }}">Back to Matches</a>
+    </div>
+</body>
+</html>
+{% endblock %}

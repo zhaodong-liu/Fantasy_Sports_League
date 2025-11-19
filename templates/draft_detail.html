@@ -1,0 +1,203 @@
+<!-- templates/draft_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Draft Details - Draft #{{ draft.DraftID }}</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* 容器样式 */
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 草稿信息样式 */
+        .draft-info {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+        }
+
+        .draft-info div {
+            flex: 1 1 200px;
+            margin: 10px;
+            font-size: 16px;
+        }
+
+        .draft-info strong {
+            color: #007bff;
+        }
+
+        /* 玩家表格样式 */
+        .players-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .players-table thead {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .players-table th, .players-table td {
+            padding: 12px 15px;
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+
+        .players-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .players-table tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+
+        /* 返回按钮样式 */
+        .back-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-button a {
+            display: inline-block;
+            text-decoration: none;
+            color: #fff;
+            background-color: #28a745;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button a:hover {
+            background-color: #218838;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .draft-info {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .draft-info div {
+                flex: 1 1 100%;
+                text-align: center;
+            }
+
+            .players-table thead {
+                display: none;
+            }
+
+            .players-table, .players-table tbody, .players-table tr, .players-table td {
+                display: block;
+                width: 100%;
+            }
+
+            .players-table tr {
+                margin-bottom: 15px;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 10px;
+                background-color: #f8f9fa;
+            }
+
+            .players-table td {
+                text-align: right;
+                padding-left: 50%;
+                position: relative;
+            }
+
+            .players-table td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                width: 45%;
+                padding-right: 10px;
+                font-weight: bold;
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Draft Details</h1>
+        <h2>Draft #{{ draft.DraftID }}</h2>
+
+        <!-- 草稿信息展示 -->
+        <div class="draft-info">
+            <div><strong>League:</strong> {{ draft.LeagueName }} ({{ draft.LeagueType }})</div>
+            <div><strong>Draft Date:</strong> {{ draft.DraftDate.strftime('%Y-%m-%d') }}</div>
+            <div><strong>Draft Order:</strong> {{ 'Round-Robin' if draft.DraftOrder == 'R' else 'Snake' }}</div>
+            <div><strong>Draft Status:</strong> 
+                {% if draft.DraftStatus == 'I' %}
+                    In Progress
+                {% elif draft.DraftStatus == 'C' %}
+                    Completed
+                {% else %}
+                    Unknown
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 被分配的玩家展示 -->
+        <table class="players-table">
+            <thead>
+                <tr>
+                    <th>Player ID</th>
+                    <th>Full Name</th>
+                    <th>Position</th>
+                    <th>Fantasy Points</th>
+                    <th>Team</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if players %}
+                    {% for player in players %}
+                        <tr>
+                            <td data-label="Player ID">{{ player.PlayerID }}</td>
+                            <td data-label="Full Name">{{ player.FullName }}</td>
+                            <td data-label="Position">{{ player.Position }}</td>
+                            <td data-label="Fantasy Points">{{ player.FantasyPoints }}</td>
+                            <td data-label="Team">{{ player.TeamName }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5">No player is assigned to this draft.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+        <!-- 返回草稿列表按钮 -->
+        <div class="back-button">
+            <a href="{{ url_for('draft') }}">Back to Drafts</a>
+        </div>
+    </div>
+</body>
+</html>

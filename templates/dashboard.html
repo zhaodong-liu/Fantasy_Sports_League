@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Welcome Message -->
+    <div class="welcome-message">
+        <h2>Welcome, {{ username }}!</h2>
+    </div>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Dashboard Options -->
+    <div class="section">
+        <h3>Your Dashboard</h3>
+        <div class="dashboard-options">
+            <div class="option">
+                <a href="{{ url_for('leagues') }}">
+                    <img src="{{ url_for('static', filename='images/league.png') }}" alt="Leagues">
+                    <p>Leagues</p>
+                </a>
+            </div>
+            <div class="option">
+                <a href="{{ url_for('teams') }}">
+                    <img src="{{ url_for('static', filename='images/team.png') }}" alt="Teams">
+                    <p>Teams</p>
+                </a>
+            </div>
+            <div class="option">
+                <a href="{{ url_for('matches') }}">
+                    <img src="{{ url_for('static', filename='images/match.png') }}" alt="Matches">
+                    <p>Matches</p>
+                </a>
+            </div>
+            <div class="option">
+                <a href="{{ url_for('get_all_player_stats') }}">
+                    <img src="{{ url_for('static', filename='images/player.png') }}" alt="Players">
+                    <p>Players</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Section -->
+    <div class="section">
+        <h3>Actions</h3>
+        <div class="dashboard-actions">
+            <div class="option">
+                <a href="{{ url_for('waiver_list') }}">
+                    <img src="{{ url_for('static', filename='images/waiver.png') }}" alt="Waiver">
+                    <p>Waiver</p>
+                </a>
+            </div>
+            <div class="option">
+                <a href="{{ url_for('trade') }}">
+                    <img src="{{ url_for('static', filename='images/trade.png') }}" alt="Trade">
+                    <p>Trade</p>
+                </a>
+            </div>
+            <div class="option">
+                <a href="{{ url_for('draft') }}">
+                    <img src="{{ url_for('static', filename='images/draft.png') }}" alt="Draft">
+                    <p>Draft</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional: List of Leagues with Draft Links -->
+    <!-- 如果需要，可以保留原有的联盟列表或移除 -->
+
+    <!-- Logout Button -->
+    <div class="logout-button">
+        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+    </div>
+</div>
+
+<!-- Custom CSS Styles -->
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+    }
+
+    .welcome-message {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .welcome-message h2 {
+        font-size: 32px;
+        color: #333;
+    }
+
+    .section {
+        margin-bottom: 50px;
+    }
+
+    .section h3 {
+        font-size: 28px;
+        color: #333;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .dashboard-options, .dashboard-actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .option {
+        text-align: center;
+        margin: 20px;
+        width: 200px;
+    }
+
+    .option a {
+        text-decoration: none;
+        color: #333;
+    }
+
+    .option img {
+        width: 100%;
+        height: auto;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        padding: 10px;
+        transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .option img:hover {
+        transform: scale(1.05);
+        border-color: #007bff;
+    }
+
+    .option p {
+        margin-top: 15px;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    /* Styling for the Actions Section Images */
+    .dashboard-actions .option img {
+        border-color: #28a745;
+    }
+
+    .dashboard-actions .option img:hover {
+        border-color: #218838;
+    }
+
+    /* Flash Messages Styling */
+    .flash-messages {
+        max-width: 800px;
+        margin: 0 auto 30px auto;
+        text-align: center;
+    }
+
+    .flash-messages .alert {
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        display: inline-block;
+    }
+
+    .flash-messages .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .flash-messages .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    /* Logout Button Styling */
+    .logout-button {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .logout-button .btn {
+        background-color: #dc3545;
+        color: white;
+        padding: 12px 25px;
+        font-size: 18px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.2s;
+    }
+
+    .logout-button .btn:hover {
+        background-color: #c82333;
+    }
+
+    /* Optional: Leagues List Styling */
+    .leagues-list {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .league-item {
+        background-color: #fff;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 10px 0;
+        width: 80%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .league-item h4 {
+        margin-bottom: 15px;
+        color: #343a40;
+    }
+
+    .league-item .btn {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 16px;
+        transition: background-color 0.3s;
+    }
+
+    .league-item .btn:hover {
+        background-color: #0056b3;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .option {
+            width: 45%;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .option {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}

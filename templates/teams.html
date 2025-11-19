@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}
+Teams
+{% endblock %}
+
+{% block content %}
+<div class="teams-container">
+    <h1>Team Actions</h1>
+
+    <div class="buttons-container">
+        <a href="{{ url_for('get_user_teams') }}" class="team-button">My Teams</a>
+        <a href="{{ url_for('create_team') }}" class="team-button">Create a New Team</a>
+    </div>
+</div>
+
+<!-- Custom CSS Styles -->
+<style>
+    .teams-container {
+        text-align: center;
+        padding: 60px 20px;
+    }
+
+    .teams-container h1 {
+        font-size: 32px;
+        color: #333;
+        margin-bottom: 50px;
+    }
+
+    .buttons-container {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+    }
+
+    .team-button {
+        display: inline-block;
+        background-color: #007bff;
+        color: white;
+        padding: 20px 40px;
+        border-radius: 8px;
+        font-size: 24px;
+        font-weight: bold;
+        text-decoration: none;
+        transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .team-button:hover {
+        background-color: #0056b3;
+        transform: translateY(-5px);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .buttons-container {
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .team-button {
+            width: 80%;
+            margin: 0 auto;
+        }
+    }
+</style>
+{% endblock %}

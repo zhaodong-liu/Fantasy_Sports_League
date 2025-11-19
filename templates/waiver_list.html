@@ -1,0 +1,217 @@
+<!-- templates/waiver_list.html -->
+{% extends 'base.html' %}
+
+{% block title %}
+Available Waiver Players
+{% endblock %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Available Waiver Players</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            color: #343a40;
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .flash-messages .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        /* Sorting Form */
+        .sorting-form {
+            max-width: 800px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sorting-form label {
+            margin-right: 10px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .sorting-form select {
+            margin-right: 20px;
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+        }
+
+        .sorting-form button {
+            padding: 8px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .sorting-form button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Players Table */
+        .table-container {
+            max-width: 1000px;
+            margin: 0 auto 40px auto;
+            overflow-x: auto;
+        }
+
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: rgba(0, 123, 255, 0.05);
+        }
+
+        .table thead th {
+            background-color: #343a40;
+            color: white;
+            text-align: center;
+        }
+
+        .table tbody td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .btn-info, .btn-warning {
+            transition: transform 0.2s;
+        }
+
+        .btn-info:hover, .btn-warning:hover {
+            transform: scale(1.05);
+        }
+
+        /* No Players Found */
+        .no-players {
+            text-align: center;
+            font-size: 18px;
+            color: #6c757d;
+            margin-top: 40px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 576px) {
+            .sorting-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .sorting-form label, .sorting-form select, .sorting-form button {
+                margin: 5px 0;
+            }
+
+            .sorting-form select {
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Available Waiver Players</h2>
+
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Sorting Options -->
+    <form method="get" action="{{ url_for('waiver_list') }}" class="sorting-form">
+        <label for="sort">Sort By:</label>
+        <select name="sort" id="sort" class="form-control">
+            <option value="Name" {% if sort_order == 'Name' %}selected{% endif %}>Name</option>
+            <option value="Sport" {% if sort_order == 'Sport' %}selected{% endif %}>Sport</option>
+            <option value="FantasyPoints" {% if sort_order == 'FantasyPoints' %}selected{% endif %}>Fantasy Points</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Sort</button>
+    </form>
+
+    <!-- Players Table -->
+    <div class="table-container">
+        <table class="table table-striped table-bordered">
+            <thead>
+                <tr>
+                    <th>Waiver ID</th>
+                    <th>Player ID</th>
+                    <th>Full Name</th>
+                    <th>Sport</th>
+                    <th>Fantasy Points</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if players %}
+                    {% for player in players %}
+                        <tr>
+                            <td>{{ player.WaiverID }}</td>
+                            <td>{{ player.PlayerID }}</td>
+                            <td>{{ player.FullName }}</td>
+                            <td>
+                                {% if player.Sport == 'FTB' %}
+                                    Football
+                                {% elif player.Sport == 'BB' %}
+                                    Basketball
+                                {% elif player.Sport == 'SB' %}
+                                    Soccer
+                                {% else %}
+                                    Unknown
+                                {% endif %}
+                            </td>
+                            <td>{{ player.FantasyPoints }}</td>
+                            <td>
+                                <a href="{{ url_for('waiver_details', waiver_id=player.WaiverID) }}" class="btn btn-info btn-sm">View Details</a>
+                                {% if is_admin %}
+                                    <a href="{{ url_for('update_waiver_status', waiver_id=player.WaiverID) }}" class="btn btn-warning btn-sm">Update Status</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="no-players">No available Waiver players at this time.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{% endblock %}

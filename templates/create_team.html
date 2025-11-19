@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}
+Create New Team
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Create a New Team</h2>
+    
+    <!-- Flash Messages -->
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <form method="POST" action="{{ url_for('create_team') }}">
+        <!-- Team Name Input -->
+        <div class="form-group">
+            <label for="team_name">Team Name:</label>
+            <input type="text" id="team_name" name="team_name" placeholder="Enter your team name" required>
+        </div>
+
+        <!-- Sport Type Selection -->
+        <div class="form-group">
+            <label for="sport_type">Sport Type:</label>
+            <select id="sport_type" name="sport_type" required>
+                <option value="">-- Select Sport Type --</option>
+                {% for sport in sport_types %}
+                    <option value="{{ sport }}">{{ sport }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- League Selection -->
+        <div class="form-group">
+            <label for="league_id">Select League:</label>
+            <select id="league_id" name="league_id" required>
+                <option value="">-- Select a League --</option>
+                {% for league in leagues %}
+                    <option value="{{ league['LeagueID'] }}" data-sport="{{ league['Sport'] }}">{{ league['LeagueName'] }} ({{ league['Sport'] }})</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit">Create Team</button>
+    </form>
+</div>
+
+<!-- Back to Team Actions Button -->
+<div class="back-teams">
+    <a href="{{ url_for('teams') }}">Back to Team Actions</a>
+</div>
+
+<!-- Custom CSS Styles -->
+<style>
+    /* General Styles */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f8fafc;
+        color: #333;
+        margin: 0;
+        padding: 0;
+    }
+
+    .form-container {
+        max-width: 500px;
+        margin: 60px auto;
+        padding: 40px;
+        background-color: #ffffff;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 40px;
+        font-size: 30px;
+        color: #333;
+    }
+
+    .form-container .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-container label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 16px;
+        color: #555;
+    }
+
+    .form-container input[type="text"],
+    .form-container select {
+        width: 100%;
+        padding: 14px 16px;
+        border: 1px solid #dcdfe6;
+        border-radius: 8px;
+        font-size: 16px;
+        background-color: #f9fafb;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-container input[type="text"]:focus,
+    .form-container select:focus {
+        border-color: #409eff;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(64, 158, 255, 0.1);
+    }
+
+    .form-container button {
+        background-color: #409eff;
+        color: white;
+        cursor: pointer;
+        padding: 14px;
+        border: none;
+        width: 100%;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        transition: background-color 0.3s, box-shadow 0.3s;
+        margin-top: 10px;
+    }
+
+    .form-container button:hover {
+        background-color: #66b1ff;
+        box-shadow: 0 6px 16px rgba(102, 177, 255, 0.2);
+    }
+
+    .flash-messages {
+        margin-bottom: 20px;
+    }
+
+    .flash-messages .alert {
+        padding: 15px;
+        border-radius: 6px;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+
+    .flash-messages .alert-danger {
+        background-color: #fde2e1;
+        color: #d9534f;
+        border: 1px solid #f5c6cb;
+    }
+
+    .flash-messages .alert-success {
+        background-color: #d4f5dd;
+        color: #28a745;
+        border: 1px solid #c3e6cb;
+    }
+
+    /* Back to Team Actions Button Styling */
+    .back-teams {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .back-teams a {
+        text-decoration: none;
+        color: white;
+        background-color: #36cfc9;
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        transition: background-color 0.3s, box-shadow 0.3s;
+        display: inline-block;
+    }
+
+    .back-teams a:hover {
+        background-color: #5cdbd3;
+        box-shadow: 0 6px 16px rgba(92, 219, 211, 0.2);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 576px) {
+        .form-container {
+            padding: 30px 20px;
+            margin: 30px 15px;
+        }
+
+        .form-container h2 {
+            font-size: 26px;
+        }
+
+        .back-teams a {
+            font-size: 16px;
+            padding: 10px 20px;
+        }
+    }
+</style>
+
+<!-- JavaScript to Filter Leagues Based on Sport Type -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sportTypeSelect = document.getElementById('sport_type');
+        const leagueSelect = document.getElementById('league_id');
+
+        sportTypeSelect.addEventListener('change', function() {
+            const selectedSport = this.value;
+
+            // Show or hide league options based on selected sport type
+            const options = leagueSelect.options;
+            for (let i = 0; i < options.length; i++) {
+                const option = options[i];
+                const sport = option.getAttribute('data-sport');
+
+                if (option.value === "") {
+                    option.style.display = '';
+                } else if (sport === selectedSport) {
+                    option.style.display = '';
+                } else {
+                    option.style.display = 'none';
+                }
+            }
+
+            // Reset the league selection when sport type changes
+            leagueSelect.selectedIndex = 0;
+        });
+    });
+</script>
+{% endblock %}

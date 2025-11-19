@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Information</title>
+</head>
+<body>
+    <h1>Team Information for {{ team_name }}</h1>
+
+    {% if team_info %}
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Team ID</th>
+                    <th>Team Name</th>
+                    <th>League Name</th>
+                    <th>League Type</th>
+                    <th>Draft Date</th>
+                    <th>Manager Name</th>
+                    <th>Manager Email</th>
+                    <th>Total Points</th>
+                    <th>League Ranking</th>
+                    <th>Team Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for team in team_info %}
+                    <tr>
+                        <td>{{ team.TeamID }}</td>
+                        <td>{{ team.TeamName }}</td>
+                        <td>{{ team.LeagueName }}</td>
+                        <td>{{ team.LeagueType }}</td>
+                        <td>{{ team.DraftDate }}</td>
+                        <td>{{ team.ManagerName }}</td>
+                        <td>{{ team.ManagerEmail }}</td>
+                        <td>{{ team.TotalPoints }}</td>
+                        <td>{{ team.LeagueRanking }}</td>
+                        <td>{{ team.TeamStatus }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No team found with the name "{{ team_name }}".</p>
+    {% endif %}
+</body>
+</html>
